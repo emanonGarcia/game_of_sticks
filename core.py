@@ -110,6 +110,6 @@ class Game:
             self.play()
         else:
             if self.machine:
-
+                self.machine.save_brain()
             print('\nBye, Felicia')
             exit()
