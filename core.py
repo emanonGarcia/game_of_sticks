@@ -4,15 +4,13 @@ from ai_machine import AI
 
 class Game:
 
-    # (self,*kwargs)
     def __init__(self):
-        self.game_title()
-        self.stix = self.get_stix()
+        self.stix = 0
         self.curr_player = "Player 1"
         self.waiting_player = ""
-        self.machine = self.get_player()
+        self.machine = None
         self.victor = ""
-        self.valid_turns = [1,2,3]
+        self.valid_turns = [1, 2, 3]
 
     def game_title(self):
         print("\n" + "\t"*4 + "*** Welcome to game of sticks ***")
@@ -34,14 +32,16 @@ class Game:
             print("\nTry again...\n")
 
     def get_player(self):
-        while True:
+        choice = ""
+        while not choice and not len(choice):
             choice = self.get_from_user("\nWould you like to play against an AI (Y/n)?")
             if choice[0] == 'y':
-                return AI()
+                self.machine = AI()
+                self.machine.load_brain()
             elif choice[0] == 'n':
-                return None
-            print("... Lets try that again")
-
+                self.machine = None
+            else:
+                print("... Lets try that again")
 
     def take_turn(self):
         print("\n* There are {} sticks left *".format(self.stix))
@@ -55,7 +55,7 @@ class Game:
                     valid = True
 
     def winner(self, player):
-        # can rework
+        # Can rework
         self.victor = player
         print("\t  {} Wins".format(self.victor))
 
@@ -64,7 +64,7 @@ class Game:
             print("\n\t!!! Game Over !!!")
             if self.stix == 1:
                 self.winner(self.curr_player)
-            elif self.stix < 1: 
+            elif self.stix < 1:
                 self.winner(self.waiting_player)
             return True
         return False
@@ -73,7 +73,8 @@ class Game:
         print("There are {} sticks remaining\n".format(self.stix))
 
     def play(self):
-        coin = random.randint(1,2)
+        self.stix = self.get_stix()
+        coin = random.randint(1, 2)
         if not self.machine:
             while not self.is_game_over():
                 if coin % 2 == 0:
@@ -89,13 +90,13 @@ class Game:
                     self.take_turn()
                 else:
                     self.curr_player, self.waiting_player = "Machine", "Player 1"
-                    if self.stix in self.machine.brain:
-                        pick = random.choice(self.machine.brain[self.stix])
+                    if str(self.stix) in self.machine.brain:
+                        pick = random.choice(self.machine.brain[str(self.stix)])
                     else:
-                        pick = random.randint(1,3)
+                        pick = random.randint(1, 3)
 
-                    print("\nAI picked up {}".format(pick))
-                    self.machine.memory.append((self.stix, pick))
+                    print("\n >> AI picked up {} <<".format(pick))
+                    self.machine.memory.append((str(self.stix), pick))
                     self.stix -= pick
                 coin += 1
 
@@ -106,10 +107,9 @@ class Game:
                     self.machine.get_smarter()
                 else:
                     self.machine.memory = []
-
-            self.stix = self.get_stix()
             self.play()
         else:
+            if self.machine:
+
             print('\nBye, Felicia')
             exit()
-
