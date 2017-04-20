@@ -4,11 +4,10 @@ class AI:
         self.brain = {}
         self.memory = []
         self.victory = False
-    # consider reading the brain from a file... and writing it after every game
-    # that way the ai learns to never lose!!!!!
+    # consider reading the brain from file... and writing it after every game
     #dump and load from json!
     def get_smarter(self):
-        while len(self.memory) > 0:
+        while self.memory:
             stick_count, pick = self.memory.pop()
             if stick_count in self.brain:
                 self.brain[stick_count].append(pick)
